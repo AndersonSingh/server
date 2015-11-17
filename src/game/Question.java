@@ -1,6 +1,9 @@
+package game;
+
 /**
  * Created by Anderson on 11/15/2015.
  */
+
 public class Question {
 
     /* properties of a question. */
