@@ -70,7 +70,10 @@ public class Game {
             /* the other player has finished so, the game can now end. */
             EndGame endObject = new EndGame();
             endObject.end = true;
-            c.sendTCP(endObject);
+
+            /* send end object to both players. */
+            playerConnections[0].sendTCP(endObject);
+            playerConnections[1].sendTCP(endObject);
 
         }
         else{
@@ -90,19 +93,32 @@ public class Game {
         playerConnections[1].sendTCP(scores);
     }
 
-    public void receiveQuestion(PlayerConnection c, int answer){
+    public void receiveAnswer(PlayerConnection c, int answer){
+
+        QuestionFeedback feedbackObj = new QuestionFeedback();
 
         /* if the player got the question correct, send new scores to player, and send feedback. */
         if(questions.get(playerCurrentQuestions[c.playerId]).getAnswer() == answer) {
             playerScores[c.playerId] = playerScores[c.playerId] + questions.get(playerCurrentQuestions[c.playerId]).getPoints();
             sendPlayerScores();
 
-            /* send feedback. */
-            QuestionFeedback feedbackObj = new QuestionFeedback();
             feedbackObj.feedback = "You got the question correct.";
         }
+        /* if the player got the question wrong, just send feedback that they got the question wrong. */
+        else{
 
 
+            feedbackObj.feedback = "You got the question wrong.";
+
+
+        }
+
+        c.sendTCP(feedbackObj);
+
+        /* update the current question for the player and then send question. */
+        playerCurrentQuestions[c.playerId] = playerCurrentQuestions[c.playerId] + 1;
+        System.out.println("Player " + c.playerId + " is on question. " + playerCurrentQuestions[c.playerId]);
+        sendQuestion(c);
     }
 
 

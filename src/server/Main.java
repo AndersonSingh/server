@@ -36,7 +36,7 @@ public class Main {
 
             public void received (Connection c, Object object) {
 
-                PlayerConnection connection = (PlayerConnection) object;
+                PlayerConnection connection = (PlayerConnection) c;
 
                 if(object instanceof RegisterPlayer) {
 
@@ -60,6 +60,15 @@ public class Main {
                         connection.playerId = 1;
 
                         /* create a new instance of game class. */
+
+                        /* find the total number of games running */
+                        int totalGames = games.size();
+
+                        /* the new gameId will be totalGames */
+                        player1Connection.gameId = totalGames;
+                        connection.gameId = totalGames;
+
+                        games.add(new Game(player1Connection, connection));
                     }
                     else {
 
@@ -71,10 +80,15 @@ public class Main {
                 else if(object instanceof QuestionResponse) {
 
                     int answer = ((QuestionResponse) object).answer;
-
+                    games.get(connection.gameId).receiveAnswer(connection, answer);
 
 
                 }
+
+            }
+
+            /* this function will be executed when a client disconnects. */
+            public void disconnected(Connection c){
 
             }
 
@@ -99,17 +113,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-        /* let's test the question class. */
-        Question question = new Question("How many inches are there in a foot?", "1", "2", "3", "12", 3, 10);
-        System.out.println("Question is : " + question.getText());
-        System.out.println("Option 1 is : " + question.getOptions()[0]);
-        System.out.println("Option 2 is : " + question.getOptions()[1]);
-        System.out.println("Option 3 is : " + question.getOptions()[2]);
-        System.out.println("Option 4 is : " + question.getOptions()[3]);
-        System.out.println("Correct answer is at index: " + question.getAnswer());
-        System.out.println("Points awarded for correct answer is: " + question.getPoints());
-
         new Main();
     }
 }

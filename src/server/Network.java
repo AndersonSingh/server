@@ -6,13 +6,14 @@ package server;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import game.Question;
 
 public class Network {
-    static public final int port = 8080;
-
+    static public final int port = 8082;
     // This registers objects that are going to be sent over the network.
     static public void register (EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
+
         kryo.register(String[].class);
         kryo.register(RegisterPlayer.class);
         kryo.register(PlayerScores.class);
@@ -20,8 +21,10 @@ public class Network {
         kryo.register(QuestionFeedback.class);
         kryo.register(PlayerWait.class);
         kryo.register(EndGame.class);
+        kryo.register(Question.class);
 
     }
+
 
 
     static public class RegisterPlayer {
