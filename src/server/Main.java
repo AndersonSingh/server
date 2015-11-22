@@ -59,7 +59,14 @@ public class Main {
                         player1Connection.playerId = 0;
                         connection.playerId = 1;
 
-                        /* create a new instance of game class. */
+                        /* send each player an object to let them know if they are player 1 or 2 from the server's perspective. */
+                        Player player1 = new Player();
+                        player1.playerId = 0;
+                        player1Connection.sendTCP(player1);
+
+                        Player player2 = new Player();
+                        player2.playerId = 1;
+                        connection.sendTCP(player2);
 
                         /* find the total number of games running */
                         int totalGames = games.size();
@@ -68,6 +75,7 @@ public class Main {
                         player1Connection.gameId = totalGames;
                         connection.gameId = totalGames;
 
+                        /* create a new instance of game class. */
                         games.add(new Game(player1Connection, connection));
                     }
                     else {
@@ -80,7 +88,7 @@ public class Main {
                 else if(object instanceof QuestionResponse) {
 
                     int answer = ((QuestionResponse) object).answer;
-                    games.get(connection.gameId).receiveAnswer(connection, answer);
+                    games.get(connection.gameId).receiveAnswer(connection.playerId, answer);
 
 
                 }

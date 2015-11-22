@@ -15,6 +15,7 @@ public class Network {
         Kryo kryo = endPoint.getKryo();
 
         kryo.register(String[].class);
+        kryo.register(int[].class);
         kryo.register(RegisterPlayer.class);
         kryo.register(PlayerScores.class);
         kryo.register(QuestionResponse.class);
@@ -22,7 +23,7 @@ public class Network {
         kryo.register(PlayerWait.class);
         kryo.register(EndGame.class);
         kryo.register(Question.class);
-
+        kryo.register(Player.class);
     }
 
 
@@ -31,9 +32,12 @@ public class Network {
         public String name;
     }
 
+    static public class Player{
+        public int playerId;
+    }
+
     static public class PlayerScores {
-        public int player1Score;
-        public int player2Score;
+        public int scores[] = new int[2];
     }
 
     static public class QuestionResponse {

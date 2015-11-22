@@ -47,25 +47,25 @@ public class Game {
         questions.add(new Question("Test: The answer is A", "A", "B", "C", "D", 0, 10));
 
         /* send out initial question and scores. */
-        sendQuestion(playerConnections[0]);
-        sendQuestion(playerConnections[1]);
+        sendQuestion(0);
+        sendQuestion(1);
         sendPlayerScores();
     }
 
-    public void sendQuestion(PlayerConnection c) {
+    public void sendQuestion(int playerId) {
 
         /* before sending question ensure there are more questions. */
-        if(playerCurrentQuestions[c.playerId] == questions.size() && otherPlayerFinish == false) {
+        if(playerCurrentQuestions[playerId] == questions.size() && otherPlayerFinish == false) {
 
             /* there are no more questions for this player, but before ending the game, need to wait for other player to finish. */
             otherPlayerFinish = true;
 
             PlayerWait waitObject = new PlayerWait();
             waitObject.wait = true;
-            c.sendTCP(waitObject);
+            playerConnections[playerId].sendTCP(waitObject);
 
         }
-        else if(playerCurrentQuestions[c.playerId] == questions.size() && otherPlayerFinish == true) {
+        else if(playerCurrentQuestions[playerId] == questions.size() && otherPlayerFinish == true) {
 
             /* the other player has finished so, the game can now end. */
             EndGame endObject = new EndGame();
@@ -78,28 +78,28 @@ public class Game {
         }
         else{
             /* send question to player. */
-            c.sendTCP(questions.get(playerCurrentQuestions[c.playerId]));
+            playerConnections[playerId].sendTCP(questions.get(playerCurrentQuestions[playerId]));
         }
 
     }
 
     public void sendPlayerScores(){
 
-        PlayerScores scores = new PlayerScores();
-        scores.player1Score = playerScores[0];
-        scores.player2Score = playerScores[1];
+        PlayerScores scoresObj = new PlayerScores();
+        scoresObj.scores[0] = playerScores[0];
+        scoresObj.scores[1] = playerScores[1];
 
-        playerConnections[0].sendTCP(scores);
-        playerConnections[1].sendTCP(scores);
+        playerConnections[0].sendTCP(scoresObj);
+        playerConnections[1].sendTCP(scoresObj);
     }
 
-    public void receiveAnswer(PlayerConnection c, int answer){
+    public void receiveAnswer(int playerId, int answer){
 
         QuestionFeedback feedbackObj = new QuestionFeedback();
 
         /* if the player got the question correct, send new scores to player, and send feedback. */
-        if(questions.get(playerCurrentQuestions[c.playerId]).getAnswer() == answer) {
-            playerScores[c.playerId] = playerScores[c.playerId] + questions.get(playerCurrentQuestions[c.playerId]).getPoints();
+        if(questions.get(playerCurrentQuestions[playerId]).getAnswer() == answer) {
+            playerScores[playerId] = playerScores[playerId] + questions.get(playerCurrentQuestions[playerId]).getPoints();
             sendPlayerScores();
 
             feedbackObj.feedback = "You got the question correct.";
@@ -113,12 +113,11 @@ public class Game {
 
         }
 
-        c.sendTCP(feedbackObj);
+        playerConnections[playerId].sendTCP(feedbackObj);
 
         /* update the current question for the player and then send question. */
-        playerCurrentQuestions[c.playerId] = playerCurrentQuestions[c.playerId] + 1;
-        System.out.println("Player " + c.playerId + " is on question. " + playerCurrentQuestions[c.playerId]);
-        sendQuestion(c);
+        playerCurrentQuestions[playerId] = playerCurrentQuestions[playerId] + 1;
+        sendQuestion(playerId);
     }
 
 
