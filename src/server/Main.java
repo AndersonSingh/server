@@ -197,6 +197,7 @@ public class Main {
 
                                 /* since game is not finished, send a packet to other player informing them that the other player quit */
                                 game.playerForfeit(connection.playerId);
+                                System.out.println("FORFEIT SENT TO"+connection.playerId);
                             }
                         }
 
