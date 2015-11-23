@@ -142,7 +142,7 @@ public class Game {
         else{
             otherPlayer = 1;
         }
-
+        System.out.println("SENDING FOR TO "+otherPlayer);
         playerConnections[otherPlayer].sendTCP(forfeitObject);
     }
 
