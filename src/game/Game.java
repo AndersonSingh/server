@@ -142,7 +142,7 @@ public class Game {
         else{
             otherPlayer = 1;
         }
-        System.out.println("SENDING FOR TO "+otherPlayer);
+        System.out.println("DEBUG: " + playerConnections[otherPlayer].name + " WON BY FORFEIT.");
         playerConnections[otherPlayer].sendTCP(forfeitObject);
     }
 

@@ -27,7 +27,6 @@ public class Main {
         /* initialize server object and handles new players connections. */
         server = new Server() {
             protected Connection newConnection () {
-                System.out.println("New Player Connected.");
                 return new PlayerConnection();
             }
         };
@@ -67,7 +66,7 @@ public class Main {
                         PlayerConnection player1Connection = waitingPlayers.remove(0);
 
                         /* start a game with both players. */
-                        System.out.println("Starting a new game with two players.");
+                        System.out.println("DEBUG: STARTING GAME WITH " + connection.name + " AND " + player1Connection.name +".");
 
                         /* assign player ids */
                         player1Connection.playerId = 0;
@@ -102,7 +101,7 @@ public class Main {
                     else {
 
                         /* since there are no waiting players, add player to waiting queue. */
-                        System.out.println("Adding player to waiting queue.");
+                        System.out.println("DEBUG: ADDED  " + connection.name + " TO WAITING QUEUE.");
 
                         /* set a playerId of -1 to indicate this player is not in a game. */
                         //connection.playerId = -1;
@@ -112,8 +111,9 @@ public class Main {
                 else if(object instanceof QuestionResponse) {
 
                     int answer = ((QuestionResponse) object).answer;
-                    System.out.println("Answer returned: " + answer);
+                    System.out.println("DEBUG: " + connection.name + " RETURNED ANSWER " +  ((QuestionResponse) object).answer + ".");
                     try{
+                        System.out.println("DEBUG: GAME LIST SIZE: " + games.size());
                         games.get(connection.gameId).receiveAnswer(connection.playerId, answer);
                     }
                     catch(Exception e){
@@ -144,7 +144,7 @@ public class Main {
                 updateTracker(ip);
 
                 if(!isBlocked(ip)) {
-                    System.out.println(ip + " is cleared to play");
+                    System.out.println("DEBUG: " + ip + " IS NOT BLOCKED, DATA: ALLOWED TO PLAY.");
 
                     // send BlockStatus object to client to indicate that they are not blocked
                     message.state = false;
@@ -155,7 +155,7 @@ public class Main {
                     // set player id to -2 to indicate that this player has been blocked so disconnected method can handle accordingly
                     connection.playerId = -2;
 
-                    System.out.println(ip + " is blocked");
+                    System.out.println("DEBUG: " + ip + " IS BLOCKED, DATA: NOT ALLOWED TO PLAY.");
                     // send BlockStatus object to client to indicate that they are blocked
                     message.state = true;
                     c.sendTCP(message);
@@ -172,14 +172,13 @@ public class Main {
 
                 /* if the connection had a playerId of -2, they were blocked. */
                 if(connection.playerId == -2){
-                    System.out.println("DEBUG: Client disconnected because they are blocked.");
-                    return;
+                    System.out.println("DEBUG: CLIENT DISCONNECTED, DATA: BLOCKED.");
                 }
-
                 /* if the connection had a playerId of -1, they were in the waiting queue. */
-                if(connection.playerId == -1) {
+                else if(connection.playerId == -1) {
                     /* remove connection from waiting queue. */
                     waitingPlayers.remove(connection);
+                    System.out.println("DEBUG: CLIENT DISCONNECTED, DATA: REMOVED FROM WAITING QUEUE.");
                 }
                 /* player is in a game. */
                 else {
@@ -194,28 +193,25 @@ public class Main {
 
                             /* ensure the game is finished, if not inform the other player that he/she won. */
                             if(!game.getGameFinished()) {
-
                                 /* since game is not finished, send a packet to other player informing them that the other player quit */
                                 game.playerForfeit(connection.playerId);
-                                System.out.println("FORFEIT SENT TO"+connection.playerId);
+                                System.out.println("DEBUG: " + connection.name + " DISCONNECTED IN GAME, " + " DATA: OTHER PLAYER WON.");
                             }
                         }
 
                         /* we can remove the game from the list of games */
                         games.remove(connection.gameId);
-
+                        System.out.println("DEBUG: GAME FINISHED, DATA: GAME REMOVED FROM GAMES LIST.");
                         /* update the game ids for the necessary games. */
                         for(int i = connection.gameId; i < games.size(); i++) {
                             games.get(i).updateGameId(i);
                         }
                     }
                     catch(Exception e) {
-                        System.out.println(e);
+                        System.out.println("DEBUG: SERVER ALREADY REMOVED GAME.");
                     }
 
                 }
-
-                System.out.println("disconnect");
             }
 
         });
