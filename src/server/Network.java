@@ -25,6 +25,7 @@ public class Network {
         kryo.register(Question.class);
         kryo.register(Player.class);
         kryo.register(Forfeit.class);
+        kryo.register(PlayerNames.class);
     }
 
 
@@ -61,5 +62,8 @@ public class Network {
         public boolean playerForfeit;
     }
 
+    static public class PlayerNames{
+        public String[] names = new String[2];
+    }
 
 }

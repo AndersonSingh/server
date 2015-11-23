@@ -68,6 +68,13 @@ public class Main {
                         player2.playerId = 1;
                         connection.sendTCP(player2);
 
+                        /* send the names of each player back. */
+                        PlayerNames  namesObj = new PlayerNames();
+                        namesObj.names[0] = player1Connection.name;
+                        namesObj.names[1] = connection.name;
+                        player1Connection.sendTCP(namesObj);
+                        connection.sendTCP(namesObj);
+                        
                         /* find the total number of games running */
                         int totalGames = games.size();
 
@@ -84,7 +91,7 @@ public class Main {
                         System.out.println("Adding player to waiting queue.");
 
                         /* set a playerId of -1 to indicate this player is not in a game. */
-                        connection.playerId = -1;
+                        //connection.playerId = -1;
                         waitingPlayers.add(connection);
                     }
                 }
@@ -108,45 +115,47 @@ public class Main {
             /* this function will be executed when a client disconnects. */
             public void disconnected(Connection c){
 
-                PlayerConnection connection = (PlayerConnection) c;
+//                PlayerConnection connection = (PlayerConnection) c;
+//
+//                /* if the connection had a playerId of -1, they were in the waiting queue. */
+//                if(connection.playerId == -1) {
+//                    /* remove connection from waiting queue. */
+//                    waitingPlayers.remove(connection);
+//                }
+//                /* player is in a game. */
+//                else {
+//
+//
+//                    try {
+//                        /* try to find the game the player belongs to. */
+//                        Game game = games.get(connection.gameId);
+//
+//                        /* ensure the player is a member of this game. */
+//                        if(game.isPlayerInGame(connection)) {
+//
+//                            /* ensure the game is finished, if not inform the other player that he/she won. */
+//                            if(!game.getGameFinished()) {
+//
+//                                /* since game is not finished, send a packet to other player informing them that the other player quit */
+//                                game.playerForfeit(connection.playerId);
+//                            }
+//                        }
+//
+//                        /* we can remove the game from the list of games */
+//                        games.remove(connection.gameId);
+//
+//                        /* update the game ids for the necessary games. */
+//                        for(int i = connection.gameId; i < games.size(); i++) {
+//                            games.get(i).updateGameId(i);
+//                        }
+//                    }
+//                    catch(Exception e) {
+//                        System.out.println(e);
+//                    }
+//
+//                }
 
-                /* if the connection had a playerId of -1, they were in the waiting queue. */
-                if(connection.playerId == -1) {
-                    /* remove connection from waiting queue. */
-                    waitingPlayers.remove(connection);
-                }
-                /* player is in a game. */
-                else {
-
-
-                    try {
-                        /* try to find the game the player belongs to. */
-                        Game game = games.get(connection.gameId);
-
-                        /* ensure the player is a member of this game. */
-                        if(game.isPlayerInGame(connection)) {
-
-                            /* ensure the game is finished, if not inform the other player that he/she won. */
-                            if(!game.getGameFinished()) {
-
-                                /* since game is not finished, send a packet to other player informing them that the other player quit */
-                                game.playerForfeit(connection.playerId);
-                            }
-                        }
-
-                        /* we can remove the game from the list of games */
-                        games.remove(connection.gameId);
-
-                        /* update the game ids for the necessary games. */
-                        for(int i = connection.gameId; i < games.size(); i++) {
-                            games.get(i).updateGameId(i);
-                        }
-                    }
-                    catch(Exception e) {
-                        System.out.println(e);
-                    }
-
-                }
+                System.out.println("disconnect");
             }
 
         });
