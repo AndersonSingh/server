@@ -24,6 +24,7 @@ public class Network {
         kryo.register(EndGame.class);
         kryo.register(Question.class);
         kryo.register(Player.class);
+        kryo.register(Forfeit.class);
     }
 
 
@@ -54,6 +55,10 @@ public class Network {
 
     static public class EndGame {
         public boolean end;
+    }
+
+    static public class Forfeit {
+        public boolean playerForfeit;
     }
 
 

@@ -21,6 +21,8 @@ public class Game {
 
     private boolean otherPlayerFinish;
 
+    private boolean gameFinished;
+
     public Game(PlayerConnection a, PlayerConnection b) {
 
         /* initialize scores for both players. */
@@ -40,6 +42,8 @@ public class Game {
 
         /* initialize waiting boolean */
         otherPlayerFinish = false;
+
+        gameFinished = false;
 
         /* initialize test questions, consider creating a separate method for this. */
         questions = new ArrayList<>();
@@ -70,6 +74,7 @@ public class Game {
             /* the other player has finished so, the game can now end. */
             EndGame endObject = new EndGame();
             endObject.end = true;
+            gameFinished = true;
 
             /* send end object to both players. */
             playerConnections[0].sendTCP(endObject);
@@ -120,8 +125,45 @@ public class Game {
         sendQuestion(playerId);
     }
 
+    public void updateGameId(int newGameId){
 
+        for(int i = 0; i < playerConnections.length; i++){
+            playerConnections[i].gameId = newGameId;
+        }
+    }
+    public void playerForfeit(int playerId){
+        int otherPlayer;
+        Forfeit forfeitObject = new Forfeit();
+        forfeitObject.playerForfeit = true;
 
+        if(playerId == 1){
+            otherPlayer = 0;
+        }
+        else{
+            otherPlayer = 1;
+        }
 
+        playerConnections[otherPlayer].sendTCP(forfeitObject);
+    }
+
+    public boolean getGameFinished(){
+        return gameFinished;
+    }
+
+    public PlayerConnection[] getPlayerConnections(){
+        return playerConnections;
+    }
+
+    public boolean isPlayerInGame(PlayerConnection c) {
+        if(playerConnections[0] == c) {
+            return true;
+        }
+        else if(playerConnections[1] == c) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
