@@ -25,6 +25,7 @@ public class Network {
         kryo.register(Question.class);
         kryo.register(Player.class);
         kryo.register(Forfeit.class);
+        kryo.register(BlockStatus.class);
         kryo.register(PlayerNames.class);
     }
 
@@ -60,6 +61,10 @@ public class Network {
 
     static public class Forfeit {
         public boolean playerForfeit;
+    }
+
+    static public class BlockStatus{
+        public boolean state;
     }
 
     static public class PlayerNames{
