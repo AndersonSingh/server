@@ -5,9 +5,11 @@ import game.*;
 import com.esotericsoftware.kryonet.*;
 import server.Network.*;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Main {
 
@@ -257,6 +259,7 @@ public class Main {
         else{
             tracker.put(ip, 1);
         }
+        writeTrackingData();
         System.out.println(ip + " has played " + tracker.get(ip) + " times");
     }
 
@@ -273,6 +276,69 @@ public class Main {
 
     public void setMaxConnects(int new_connects){
         max_connects = new_connects;
+    }
+
+    /*
+    public void readTrackingData(){
+        String line = null;
+        int count=0;
+
+        try{
+            BufferedReader buff = new BufferedReader(new FileReader("tracks.txt"));
+
+            while((line = buff.readLine()) != null){
+                count++;
+                if(count > 1){
+                    StringTokenizer st = new StringTokenizer(line,";");
+
+                    while(st.hasMoreTokens() == true){
+
+                        String ip = st.nextToken();
+                        int amt = Integer.parseInt(st.nextToken());
+
+                        tracker.put(ip, amt);
+                    }
+                }
+            }
+            buff.close();
+        }
+
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+*/
+    public void writeTrackingData(){
+        PrintWriter out = null;
+
+        try{
+            out = new PrintWriter(new BufferedWriter(new FileWriter("track.txt")));
+
+            out.println("IP;NumConnected");
+
+            Iterator<String> trackIter = tracker.keySet().iterator();
+
+            while(trackIter.hasNext())  {
+                String ip  = trackIter.next();
+                int count = tracker.get(ip);
+                out.println(ip+";"+count);
+            }
+        }
+
+        catch(FileNotFoundException fe){
+            System.out.println(fe.getMessage());
+        }
+
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        finally{
+            if(out!=null){
+                out.close();
+            }
+
+        }
     }
 
     public class PlayerConnection extends Connection {
