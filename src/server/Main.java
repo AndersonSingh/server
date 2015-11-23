@@ -106,7 +106,7 @@ public class Main {
                         System.out.println("DEBUG: ADDED  " + connection.name + " TO WAITING QUEUE.");
 
                         /* set a playerId of -1 to indicate this player is not in a game. */
-                        //connection.playerId = -1;
+                        connection.playerId = -1;
                         waitingPlayers.add(connection);
                     }
                 }
