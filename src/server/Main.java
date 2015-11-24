@@ -21,7 +21,7 @@ public class Main {
     private static final int MAX_CONNECTED_INTERVAL = 3;
     private static int max_connects = 3;
     private static Date serverStartTime;
-    private static final long TIME_TO_RESET = 300000;
+    private static final long TIME_TO_RESET = 210000;
 
     /* constructor function */
     public Main() {
