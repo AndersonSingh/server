@@ -4,6 +4,8 @@ import server.Main;
 import server.Main.PlayerConnection;
 import server.Network;
 import server.Network.*;
+import java.util.*;
+import java.io.*;
 
 import java.util.ArrayList;
 
@@ -47,13 +49,50 @@ public class Game {
 
         /* initialize test questions, consider creating a separate method for this. */
         questions = new ArrayList<>();
-        questions.add(new Question("Test: The answer is D", "A", "B", "C", "D", 3, 10));
-        questions.add(new Question("Test: The answer is A", "A", "B", "C", "D", 0, 10));
+        loadQuestions();
 
         /* send out initial question and scores. */
         sendQuestion(0);
         sendQuestion(1);
         sendPlayerScores();
+    }
+
+    public void loadQuestions(){
+        String line = null;
+        int count=0;
+
+        try{
+            BufferedReader buff = new BufferedReader(new FileReader("questions.txt"));
+
+            while((line = buff.readLine()) != null){
+                count++;
+                if(count > 1){
+                    StringTokenizer st = new StringTokenizer(line,";");
+
+                    while(st.hasMoreTokens() == true){
+
+
+                        String ques = st.nextToken();
+                        String opt1 = st.nextToken();
+                        String opt2 = st.nextToken();
+                        String opt3 = st.nextToken();
+                        String opt4 = st.nextToken();
+                        int ans = Integer.parseInt(st.nextToken());
+                        int pts = Integer.parseInt(st.nextToken());
+
+                        Question newQues = new Question(ques,opt1,opt2,opt3,opt4,ans,pts);
+
+                        questions.add(newQues);
+                    }
+                }
+            }
+
+            buff.close();
+        }
+
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public void sendQuestion(int playerId) {
